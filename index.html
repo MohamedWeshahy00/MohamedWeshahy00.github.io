@@ -1449,43 +1449,48 @@
 
     /* ---------- Contact form submit (UI feedback only) ---------- */
     async function handleSubmit(e) {
-      e.preventDefault();
-      const btn = e.target.querySelector('button[type="submit"]');
-      btn.textContent = '✓ Sent!';
-      btn.style.background = '#16a34a';
-      btn.disabled = true;
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
 
-      const formData = {
-        name:    document.getElementById('fname').value + ' ' + document.getElementById('lname').value,
-        email:   document.getElementById('email').value,
-        subject: document.getElementById('subject').value,
-        message: document.getElementById('message').value
-      };
+  // Show loading state FIRST
+  btn.textContent = 'Sending...';
+  btn.style.background = '#2563EB';
+  btn.disabled = true;
 
-      try {
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOYFUPlIasHPRykJu6Vva3RVP7P_Ikq4F26xnBTCvuNWnNwh5sqMkltUaQUJX0BkUN/exec';
+  const formData = {
+    name:    document.getElementById('fname').value + ' ' + document.getElementById('lname').value,
+    email:   document.getElementById('email').value,
+    subject: document.getElementById('subject').value,
+    message: document.getElementById('message').value
+  };
 
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode:   'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body:   JSON.stringify(formData)
-        });
-        btn.textContent  = '✓ Message Sent!';
-        btn.style.background = '#16a34a';
-        e.target.reset();
+  try {
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOYFUPlIasHPRykJu6Vva3RVP7P_Ikq4F26xnBTCvuNWnNwh5sqMkltUaQUJX0BkUN/exec';
 
-        setTimeout(() => {
-          btn.textContent      = 'Send Message →';
-          btn.style.background = '';
-          btn.disabled         = false;
-        }, 4000);
-      } catch (err) {
-        btn.textContent      = '✗ Failed — Try Again';
-        btn.style.background = '#dc2626';
-        btn.disabled         = false;
-      }
-    }
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode:   'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body:   JSON.stringify(formData)
+    });
+
+    // Only show success AFTER fetch completes
+    btn.textContent = '✓ Message Sent!';
+    btn.style.background = '#16a34a';
+    e.target.reset();
+
+    setTimeout(() => {
+      btn.textContent      = 'Send Message →';
+      btn.style.background = '';
+      btn.disabled         = false;
+    }, 4000);
+
+  } catch (err) {
+    btn.textContent      = '✗ Failed — Try Again';
+    btn.style.background = '#dc2626';
+    btn.disabled         = false;
+  }
+}
     
   </script>
 
