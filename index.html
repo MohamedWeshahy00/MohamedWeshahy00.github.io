@@ -1448,28 +1448,45 @@
     revealEls.forEach(el => observer.observe(el));
 
     /* ---------- Contact form submit (UI feedback only) ---------- */
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
       e.preventDefault();
       const btn = e.target.querySelector('button[type="submit"]');
       btn.textContent = '✓ Sent!';
       btn.style.background = '#16a34a';
       btn.disabled = true;
-      setTimeout(() => {
-        btn.textContent = 'Send Message →';
-        btn.style.background = '';
-        btn.disabled = false;
-        e.target.reset();
-      }, 3000);
-      /*
-        ← TO MAKE THE FORM FUNCTIONAL:
-        Replace this block with a fetch() call to Formspree:
-        fetch('https://formspree.io/f/YOUR_FORM_ID', {
+
+      const formData = {
+        name:    document.getElementById('fname').value + ' ' + document.getElementById('lname').value,
+        email:   document.getElementById('email').value,
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value
+      };
+
+      try {
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOYFUPlIasHPRykJu6Vva3RVP7P_Ikq4F26xnBTCvuNWnNwh5sqMkltUaQUJX0BkUN/exec';
+
+        await fetch(SCRIPT_URL, {
           method: 'POST',
-          body: new FormData(e.target),
-          headers: { 'Accept': 'application/json' }
-        })
-      */
+          mode:   'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body:   JSON.stringify(formData)
+        });
+        btn.textContent  = '✓ Message Sent!';
+        btn.style.background = '#16a34a';
+        e.target.reset();
+
+        setTimeout(() => {
+          btn.textContent      = 'Send Message →';
+          btn.style.background = '';
+          btn.disabled         = false;
+        }, 4000);
+      } catch (err) {
+        btn.textContent      = '✗ Failed — Try Again';
+        btn.style.background = '#dc2626';
+        btn.disabled         = false;
+      }
     }
+    
   </script>
 
 </body>
